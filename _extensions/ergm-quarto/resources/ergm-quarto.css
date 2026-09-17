@@ -1,0 +1,190 @@
+/* ergm-quarto.css
+ * ---------------------------------------------------------------------
+ * ergm-widget.js injects its own <style data-ergm-widget> into
+ * document.head at FIRST MOUNT (i.e. at DOMContentLoaded) -- AFTER this
+ * file's <link>, which Quarto places at the top of <head>. Source order
+ * can't be won, so specificity has to do the work. Two conventions; do
+ * not "simplify" either away:
+ *
+ *   :where(...)               -- specificity 0 -- for --ergm-* DEFAULTS.
+ *                                The runtime sheet never declares these
+ *                                properties, so there's nothing to beat,
+ *                                and a plain `.ergm-widget { --ergm-x: y }`
+ *                                in an author's own CSS overrides us with
+ *                                no !important needed.
+ *   .ergm-widget.ergm-widget  -- +1 class -- for rules that must beat a
+ *                                same-named runtime rule. Exactly one
+ *                                class more specific than every runtime
+ *                                selector (0,2,0 vs 0,1,0; 0,3,0 vs 0,2,0;
+ *                                0,4,1 vs 0,3,1), so it wins regardless of
+ *                                injection order.
+ *
+ * Ordering AMONG the :where() blocks below is significant (later wins):
+ *   1 light defaults -> 2 reveal.js -> 3 quarto-dark (FOUC guard only)
+ *   -> 4 resolved [data-ergm-scheme] (authoritative, written by our JS).
+ *
+ * The four canvas-bound custom properties (--ergm-group-1/-2,
+ * --ergm-edge-match/-cross) must always be LITERAL hex here, never
+ * var(--r-...): sigma parses colours itself and does not resolve var().
+ * ergm-quarto.js reads them via getComputedStyle and passes them to
+ * mount() -- only for options the author didn't already set.
+ * --------------------------------------------------------------------- */
+
+/* 1. light defaults ----------------------------------------------------- */
+:where(.ergm-widget) {
+  --ergm-surface: #ffffff;
+  --ergm-surface-2: #f7f8f9;
+  --ergm-border: #d8dce1;
+  --ergm-border-soft: #e2e4e8;
+  --ergm-fg: inherit;
+  --ergm-muted: #6b7280;
+  --ergm-accent: #00707a;
+  --ergm-accent-fg: #ffffff;
+  --ergm-btn-bg: #f4f5f7;
+  --ergm-btn-bg-hover: #e8eaed;
+  --ergm-btn-border: #b8bec6;
+  --ergm-version-bg: rgba(255, 255, 255, 0.82);
+  --ergm-font-size: inherit;
+  --ergm-group-1: #00707a;
+  --ergm-group-2: #c0491f;
+  --ergm-edge-match: #00707a;
+  --ergm-edge-cross: #c9ccd1;
+}
+
+/* 2. reveal.js: inherit deck chrome; shrink type -- deck body text is
+      often ~40px, and the widget's own 0.85em controls would be huge. */
+:where(.reveal .ergm-widget) {
+  --ergm-surface: var(--r-background-color, #ffffff);
+  --ergm-fg: var(--r-main-color, inherit);
+  --ergm-accent: var(--r-link-color, #00707a);
+  --ergm-font-size: 0.5em;
+}
+
+/* 3. Quarto's dual-theme toggle sets body.quarto-dark in a before-body
+      inline script, i.e. before our own script runs -- this block exists
+      purely to avoid a light flash before ergm-quarto.js resolves the
+      scheme and writes data-ergm-scheme. */
+:where(body.quarto-dark .ergm-widget) {
+  --ergm-surface: #1b1f24;
+  --ergm-surface-2: #22272e;
+  --ergm-border: #3a4048;
+  --ergm-border-soft: #2e343b;
+  --ergm-fg: #e6e8eb;
+  --ergm-muted: #9aa4b0;
+  --ergm-accent: #2bb8c4;
+  --ergm-accent-fg: #0b0d0f;
+  --ergm-btn-bg: #2a3037;
+  --ergm-btn-bg-hover: #353c45;
+  --ergm-btn-border: #4a525c;
+  --ergm-version-bg: rgba(0, 0, 0, 0.55);
+  --ergm-group-1: #2bb8c4;
+  --ergm-group-2: #ef7a4b;
+  --ergm-edge-match: #2bb8c4;
+  --ergm-edge-cross: #4a525c;
+}
+
+/* 4. resolved scheme, written by ergm-quarto.js -- authoritative, last. */
+:where(.ergm-widget[data-ergm-scheme="dark"]) {
+  --ergm-surface: #1b1f24;
+  --ergm-surface-2: #22272e;
+  --ergm-border: #3a4048;
+  --ergm-border-soft: #2e343b;
+  --ergm-fg: #e6e8eb;
+  --ergm-muted: #9aa4b0;
+  --ergm-accent: #2bb8c4;
+  --ergm-accent-fg: #0b0d0f;
+  --ergm-btn-bg: #2a3037;
+  --ergm-btn-bg-hover: #353c45;
+  --ergm-btn-border: #4a525c;
+  --ergm-version-bg: rgba(0, 0, 0, 0.55);
+  --ergm-group-1: #2bb8c4;
+  --ergm-group-2: #ef7a4b;
+  --ergm-edge-match: #2bb8c4;
+  --ergm-edge-cross: #4a525c;
+}
+:where(.ergm-widget[data-ergm-scheme="light"]) {
+  --ergm-surface: #ffffff;
+  --ergm-surface-2: #f7f8f9;
+  --ergm-border: #d8dce1;
+  --ergm-border-soft: #e2e4e8;
+  --ergm-fg: inherit;
+  --ergm-muted: #6b7280;
+  --ergm-accent: #00707a;
+  --ergm-accent-fg: #ffffff;
+  --ergm-btn-bg: #f4f5f7;
+  --ergm-btn-bg-hover: #e8eaed;
+  --ergm-btn-border: #b8bec6;
+  --ergm-version-bg: rgba(255, 255, 255, 0.82);
+  --ergm-group-1: #00707a;
+  --ergm-group-2: #c0491f;
+  --ergm-edge-match: #00707a;
+  --ergm-edge-cross: #c9ccd1;
+}
+
+/* 5. THE OVERRIDES -- doubled class, must beat the runtime sheet -------- */
+.ergm-widget.ergm-widget {
+  color: var(--ergm-fg);
+  font-size: var(--ergm-font-size);
+}
+.ergm-widget.ergm-widget .ergm-graph-pane {
+  background: var(--ergm-surface);
+  border-color: var(--ergm-border);
+}
+.ergm-widget.ergm-widget .ergm-version {
+  background: var(--ergm-version-bg);
+  color: var(--ergm-muted);
+}
+.ergm-widget.ergm-widget .ergm-stats {
+  background: var(--ergm-surface-2);
+  border-color: var(--ergm-border-soft);
+  color: var(--ergm-fg);
+}
+.ergm-widget.ergm-widget .ergm-hint {
+  color: var(--ergm-muted);
+}
+.ergm-widget.ergm-widget .ergm-buttons button {
+  background: var(--ergm-btn-bg);
+  border-color: var(--ergm-btn-border);
+  color: var(--ergm-fg);
+}
+.ergm-widget.ergm-widget .ergm-buttons button:hover {
+  background: var(--ergm-btn-bg-hover);
+}
+.ergm-widget.ergm-widget .ergm-buttons button.ergm-primary {
+  background: var(--ergm-accent);
+  border-color: var(--ergm-accent);
+  color: var(--ergm-accent-fg);
+}
+.ergm-widget.ergm-widget .ergm-row input[type="range"] {
+  accent-color: var(--ergm-accent);
+}
+
+/* 6. Quarto-side layout -------------------------------------------------- */
+/* Reserve space before mount so the page doesn't jump. 360px mirrors
+   ergm-widget.js DEFAULTS.height (the one default duplicated here; kept in
+   sync via tools/vendor-ergm-js.sh's manual checklist). The `height` kwarg
+   overrides it through --ergm-min-height. */
+:where(.ergm-quarto) {
+  min-height: var(--ergm-min-height, 360px);
+}
+.ergm-quarto[data-ergm-mounted] {
+  min-height: 0;
+}
+.ergm-quarto-error {
+  display: block;
+  padding: 0.75em 1em;
+  border: 1px solid #c0491f;
+  border-radius: 6px;
+  color: #c0491f;
+  font-size: 0.9em;
+}
+
+@media print {
+  .ergm-widget.ergm-widget .ergm-buttons {
+    display: none;
+  }
+  .ergm-widget.ergm-widget .ergm-graph-pane {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

@@ -1,0 +1,12 @@
+---
+title: ergm-quarto example
+format: html
+---
+
+## A default widget
+
+{{< ergm-widget >}}
+
+## A configured widget
+
+{{< ergm-widget n=60 mean-degree=6 theta-nodematch=2 height=420 >}}
