@@ -1,0 +1,26 @@
+---
+title: ergm-quarto in revealjs
+format:
+  revealjs:
+    slide-number: true
+ergm-widget:
+  height: 380
+---
+
+## Intro
+
+Arrow through this deck. Each widget should only be "visible" (running its
+render loop) while its own slide is current -- open the console and check
+`ERGMQuarto.instances.map(r => r.widget._visible)`.
+
+## First widget
+
+{{< ergm-widget n=50 theta-nodematch=2 >}}
+
+## Second widget
+
+{{< ergm-widget layout="circle" model="edges,mutual" theta-mutual=2 >}}
+
+## Third widget (document default height=380 applies here too)
+
+{{< ergm-widget n=30 auto-start=true >}}

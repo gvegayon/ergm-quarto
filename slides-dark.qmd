@@ -1,0 +1,18 @@
+---
+title: ergm-quarto in a dark revealjs theme
+format:
+  revealjs:
+    theme: night
+    slide-number: true
+---
+
+## Dark theme
+
+The widget should resolve to the dark scheme automatically -- no `scheme=`
+kwarg is set anywhere on this page. Check
+`document.querySelector('.ergm-widget').dataset.ergmScheme` in the console;
+it should read `"dark"`.
+
+## A widget
+
+{{< ergm-widget n=50 >}}

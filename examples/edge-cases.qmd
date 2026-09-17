@@ -1,0 +1,44 @@
+---
+title: ergm-quarto edge cases
+format: html
+---
+
+## No kwargs at all -- must have no `data-ergm-options` attribute
+
+{{< ergm-widget >}}
+
+## Empty model -- must encode as `{"model":[]}`, not `{"model":{}}`
+
+{{< ergm-widget model="" >}}
+
+## A single negative float kwarg
+
+{{< ergm-widget theta-edges=-2.5 >}}
+
+## A bare integer -- must encode as `40`, not `40.0`
+
+{{< ergm-widget n=40 >}}
+
+## Two colours -- proves attribute escaping ran (raw text must contain `&quot;`)
+
+{{< ergm-widget group-colors="#00707a,#c0491f" >}}
+
+## Presentation kwargs: id, class, width, scheme
+
+{{< ergm-widget id="my-widget" class="my-extra-class" width="480px" scheme="dark" >}}
+
+## Boolean coercion variants
+
+{{< ergm-widget auto-start=yes controls-n=false controls-mean-degree=off >}}
+
+## Unknown option -- expected to fail loudly
+
+{{< ergm-widget not-a-real-option=1 >}}
+
+## Unknown model term -- expected to fail loudly
+
+{{< ergm-widget model="edges,bogus" >}}
+
+## Out-of-range soft warning (still renders; check render log for the warning)
+
+{{< ergm-widget n=500 >}}

@@ -1,0 +1,32 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.qmd"
+    - "examples/*.qmd"
+
+website:
+  title: "ergm-quarto"
+  description: "A Quarto extension embedding the ergm-js interactive network widget."
+  page-navigation: true
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: reference.qmd
+        text: Reference
+      - href: gallery.qmd
+        text: Gallery
+      - href: theming.qmd
+        text: Theming
+      - href: slides.qmd
+        text: Slides (light)
+      - href: slides-dark.qmd
+        text: Slides (dark)
+      - icon: github
+        href: https://github.com/gvegayon/ergm-quarto
+
+format:
+  html:
+    theme: cosmo
+    toc: true
