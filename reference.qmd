@@ -1,0 +1,108 @@
+---
+title: Reference
+subtitle: "Every option {{< ergm-widget >}} accepts."
+format: html
+---
+
+## Usage
+
+```markdown
+{{< ergm-widget n=60 theta-nodematch=2 height=420 >}}
+```
+
+Values are plain `key=value` pairs -- no quotes needed unless a value
+contains whitespace. Unknown keys and invalid values are rendering errors,
+not silently ignored.
+
+## Document-level defaults
+
+Set defaults for every widget on a page (or, in `_quarto.yml`, an entire
+project) under an `ergm-widget:` key. Both the nested and flat forms below
+are equivalent; a shortcode's own kwargs always override these, one option
+at a time (not one whole sub-object at a time):
+
+```yaml
+---
+ergm-widget:
+  height: 420
+  layout: circle
+  theta:
+    edges: -2.5
+---
+```
+
+```yaml
+---
+ergm-widget:
+  height: 420
+  layout: circle
+  theta-edges: -2.5
+---
+```
+
+`id` cannot be set at the document level (it would duplicate on every
+widget).
+
+## Presentation options
+
+These control the emitted `<div>` itself and are never forwarded to
+`ERGMWidget.mount()`.
+
+| option | effect | accepts |
+|---|---|---|
+| `id` | `id` attribute (kwarg only, not in document YAML) | starts with a letter; letters, digits, `- _ : .` |
+| `class` | extra CSS classes, space-separated | `[-_a-zA-Z0-9]+`, repeatable |
+| `width` | `max-width` on the widget | a CSS length, e.g. `480px`, `30em`, `100%` |
+| `scheme` | force light/dark instead of auto-detecting | `light`, `dark`, `auto` (default) |
+| `fallback` | behavior in non-HTML output (PDF/docx/typst/...) | `note` (default), `none`, `image` |
+| `fallback-text` | replaces the default fallback note | free text |
+| `fallback-image` | image shown when `fallback=image` | a path |
+
+## Widget options
+
+Forwarded to `ERGMWidget.mount()`. See the
+[ergm-js README](https://github.com/gvegayon/ergm-js#readme) for the
+underlying simulation semantics.
+
+| option | JS option | type | notes |
+|---|---|---|---|
+| `n` | `n` | integer, ≥ 2 | slider range 20–120 |
+| `mean-degree` | `meanDegree` | number, > 0 | slider range 1–10 |
+| `p-group` | `pGroup` | number, 0–1 | initial group-membership probability |
+| `seed` | `seed` | integer | PRNG seed |
+| `steps-per-frame` | `stepsPerFrame` | integer, 1–100000 | Gibbs proposals per animation frame while running |
+| `height` | `height` | integer (px) | also sets the `min-height` reserved before mount |
+| `auto-start` | `autoStart` | boolean | `true`/`false`, also `yes`/`no`, `on`/`off`, `1`/`0` |
+| `layout` | `layout` | `force` \| `circle` | |
+| `model` | `model` | comma-separated list | subset of `edges`, `nodematch`, `mutual`; `model=""` is legal (no terms) |
+| `theta-edges` | `theta.edges` | number | slider range −5–1 |
+| `theta-nodematch` | `theta.nodematch` | number | slider range −2–4 |
+| `theta-mutual` | `theta.mutual` | number | slider range −2–4 |
+| `controls-n` | `controls.n` | boolean | hide the `n` slider |
+| `controls-mean-degree` | `controls.meanDegree` | boolean | hide the mean-degree slider |
+| `group-colors` | `groupColors` | two colors, comma-separated | e.g. `#00707a,#c0491f` |
+| `edge-color-match` | `edgeColorMatch` | color | |
+| `edge-color-cross` | `edgeColorCross` | color | |
+
+A `theta-*` value for a term not included in `model` is accepted but has no
+effect (the widget only reads coefficients for active terms). A `theta-*`
+or `n`/`mean-degree` value outside its slider range still simulates
+correctly, but the on-screen slider will show clamped -- a render-time
+warning suggests hiding the affected control when applicable.
+
+Colors accept `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`, or a bare CSS color
+keyword (e.g. `steelblue`) -- not `rgb(...)`/`hsl(...)`, since a comma inside
+one of those would be indistinguishable from the list separator used by
+`group-colors`.
+
+## Non-HTML output
+
+In any format that isn't HTML-with-JS (PDF via LaTeX or typst, docx, ...),
+`{{< ergm-widget >}}` never emits its JavaScript machinery. Instead:
+
+- `fallback=note` (the default) prints one italic line of text.
+- `fallback=none` prints nothing.
+- `fallback=image` prints `fallback-image` as a static image.
+
+All widget/presentation options are still validated in every format, so a
+typo is caught even when you only render to `docx`.

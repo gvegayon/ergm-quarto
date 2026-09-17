@@ -1,0 +1,22 @@
+---
+title: ergm-quarto non-HTML fallback
+format:
+  typst: default
+  docx: default
+---
+
+## Default fallback (a note)
+
+{{< ergm-widget n=50 >}}
+
+## Explicit `fallback=none` -- nothing should render below this heading
+
+{{< ergm-widget fallback="none" >}}
+
+## Custom fallback text
+
+{{< ergm-widget fallback-text="See the live version at the project website." >}}
+
+## Validation still runs in non-HTML formats
+
+{{< ergm-widget not-a-real-option=1 >}}

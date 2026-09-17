@@ -1,0 +1,61 @@
+---
+title: Theming and dark mode
+format: html
+---
+
+## Why this needs explaining
+
+`ergm-js`'s widget injects its own `<style>` tag into `document.head` the
+first time it mounts a widget -- and it does that *after* this extension's
+own stylesheet has already been placed in `<head>` by Quarto. That means a
+plain CSS override of equal specificity would lose, every time, regardless
+of source order in your own `.qmd`.
+
+The extension works around this with two conventions in its shipped
+`ergm-quarto.css`:
+
+- All theme *tokens* (`--ergm-surface`, `--ergm-accent`, etc.) are declared
+  inside `:where(...)` selectors, which contribute **zero** specificity. If
+  you set `--ergm-surface` yourself on `.ergm-widget` (or any ancestor), your
+  value wins automatically -- no `!important` needed.
+- The handful of rules that must beat the widget's own runtime styles use a
+  doubled class, `.ergm-widget.ergm-widget`, which is exactly one class more
+  specific than every selector the runtime stylesheet uses.
+
+## Automatic light/dark detection
+
+No `scheme=` kwarg is set on either widget below. The extension walks up
+from each widget looking for the first non-transparent background color,
+computes its relative luminance, and picks `dark` below a 0.4 threshold.
+This is deliberately **not** based on `prefers-color-scheme`: a page that is
+only ever light (or only ever dark) shouldn't clash with a viewer's OS-level
+preference.
+
+::: {style="background:#111214; padding:1.5rem; border-radius:8px;"}
+### On a dark background
+
+{{< ergm-widget n=40 >}}
+:::
+
+::: {style="background:#ffffff; padding:1.5rem; border-radius:8px; border:1px solid #e2e4e8;"}
+### On a light background
+
+{{< ergm-widget n=40 >}}
+:::
+
+## Forcing a scheme
+
+Use `scheme=dark` or `scheme=light` to override the automatic probe --
+useful if your page's background comes from a source the probe can't see
+(e.g. a `background-image`, or content painted by another framework).
+
+{{< ergm-widget n=40 scheme="dark" >}}
+
+## What theming does *not* cover
+
+Chrome (panes, buttons, stats box) re-themes live if your page's own theme
+changes at runtime (e.g. Quarto's light/dark toggle). The **graph itself**
+does not: node and edge colors are JavaScript options baked into the
+network's graph attributes when the widget mounts, and `ergm-js` has no API
+to re-color a live graph without fully resetting it. If you need the canvas
+colors to react to a live toggle, re-render the page.

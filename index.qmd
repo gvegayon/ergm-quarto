@@ -1,0 +1,73 @@
+---
+title: ergm-quarto
+subtitle: "A Quarto extension embedding the ergm-js interactive network widget."
+format: html
+---
+
+[`ergm-js`](https://github.com/gvegayon/ergm-js) is a small, dependency-light
+interactive Exponential Random Graph Model (ERGM) simulator built for
+teaching and presentations. This extension lets you drop it into any
+HTML-based Quarto output -- `html` documents, websites, books, `revealjs`
+decks -- with a single shortcode.
+
+## Quick start
+
+```bash
+quarto add gvegayon/ergm-quarto
+```
+
+Then, anywhere in a `.qmd`:
+
+```markdown
+{{< ergm-widget n=60 theta-nodematch=2 height=420 >}}
+```
+
+## A live widget
+
+{{< ergm-widget >}}
+
+## Learn more
+
+- [Reference](reference.qmd) -- the full option table
+- [Gallery](gallery.qmd) -- many widgets, scroll-triggered mounting
+- [Theming](theming.qmd) -- dark mode and CSS custom properties
+- [Slides (light)](slides.qmd) / [Slides (dark)](slides-dark.qmd) -- revealjs demos
+
+## Why no inline `<script>`?
+
+The obvious implementation -- emit a `<div>` plus an inline
+`<script>ERGMWidget.mount(...)</script>` next to it -- breaks inside
+reveal.js. reveal.js itself loads at the *end* of `<body>`, after all slide
+markup, so an inline script sitting inside a slide runs while
+`window.Reveal` is still undefined. `ergm-widget.js`'s own lazy-init logic
+checks for `Reveal` first and falls back to a plain `IntersectionObserver`
+when it's missing -- which, inside a reveal.js deck (where every slide is
+already in the DOM), is the wrong behavior: it can't tell which slide is
+"current".
+
+Instead, this extension emits only a `<div>` with a JSON options payload in
+a `data-ergm-options` attribute, and ships a small bootstrap script
+(`ergm-quarto.js`) that mounts every such div at `DOMContentLoaded`. By then
+reveal.js has already run `Reveal.initialize()` (also an end-of-body,
+parser-blocking script), so `window.Reveal` exists and `ergm-widget.js`
+correctly takes its per-slide show/hide branch instead.
+
+## Known limitations
+
+- **Live theme toggling doesn't recolor the graph.** Chrome (panes,
+  buttons, stats) re-themes live; node/edge colors are baked in at mount
+  time. See [Theming](theming.qmd).
+- **`?print-pdf` needs a nudge.** reveal.js's print mode reports only one
+  "current" slide, which would otherwise hide every widget except that one.
+  The bootstrap force-shows all widgets when it detects `print-pdf` in the
+  URL.
+- **Colors are restricted** to hex forms (`#rgb`, `#rrggbb`, ...) or bare CSS
+  color keywords -- `rgb(...)`/`hsl(...)` aren't accepted, mainly so a color
+  value can never contain the comma used to separate list options.
+- **A widget outside its documented slider range** (e.g. `n=500`) still
+  simulates correctly, but its on-screen `<input type="range">` will show
+  clamped. The extension warns about this at render time.
+- Loading several extensions that each inject `<head>` dependencies can, in
+  rare cases, push `<meta charset="utf-8">` past the browser's fixed
+  pre-scan window for local `file://` previews of non-ASCII documents.
+  Serving over HTTP (e.g. GitHub Pages) always avoids this.

@@ -1,0 +1,53 @@
+---
+title: Gallery
+subtitle: "Several widgets on one page, spread out so you can scroll between them."
+format: html
+---
+
+Scroll down slowly and watch the Performance panel (or just
+`ERGMQuarto.instances.map(r => r.widget._visible)` in the console): each
+widget only spins up its sigma renderer and animation loop once it
+scrolls into view, and stops again once it scrolls back out. This page has
+no reveal.js, so `ergm-widget.js` falls back to its `IntersectionObserver`
+branch.
+
+## Dense, homophilous network
+
+{{< ergm-widget n=60 theta-edges=-2 theta-nodematch=3 >}}
+
+<div style="height: 60vh;"></div>
+
+## Sparse network, no homophily
+
+{{< ergm-widget n=60 theta-edges=-4 model="edges" >}}
+
+<div style="height: 60vh;"></div>
+
+## Reciprocity-heavy directed network
+
+{{< ergm-widget n=40 theta-mutual=2.5 layout="circle" >}}
+
+<div style="height: 60vh;"></div>
+
+## Auto-starting, hidden network controls
+
+{{< ergm-widget n=50 auto-start=true controls-n=false controls-mean-degree=false >}}
+
+<div style="height: 60vh;"></div>
+
+## Everything customized
+
+{{< ergm-widget
+  id="gallery-custom"
+  n=80
+  mean-degree=5
+  p-group=0.3
+  seed=7
+  height=300
+  model="edges,nodematch"
+  theta-edges=-3
+  theta-nodematch=2.5
+  group-colors="#5b21b6,#f59e0b"
+  edge-color-match="#5b21b6"
+  edge-color-cross="#d4d4d8"
+>}}

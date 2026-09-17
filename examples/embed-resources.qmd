@@ -1,0 +1,17 @@
+---
+title: ergm-quarto with embed-resources
+format:
+  revealjs:
+    embed-resources: true
+---
+
+## Self-contained deck
+
+This deck is rendered with `embed-resources: true`, so the vendored
+ergm-js/graphology/sigma scripts and our own bootstrap/CSS are all inlined
+into a single HTML file -- open it with the network disabled and it should
+still work.
+
+## A widget
+
+{{< ergm-widget n=45 theta-nodematch=1.8 >}}
