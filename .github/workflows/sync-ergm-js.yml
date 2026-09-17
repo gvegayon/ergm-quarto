@@ -1,0 +1,63 @@
+# Weekly check for a new gvegayon/ergm-js release. If the vendored VERSION
+# is behind, refreshes the vendored assets and opens a PR carrying
+# tools/vendor-ergm-js.sh's manual review checklist -- this workflow never
+# auto-merges; every upstream bump needs a human to check for DEFAULTS
+# drift (see the checklist in the PR body).
+name: Sync ergm-js
+
+on:
+  schedule:
+    - cron: "17 6 * * 1" # Mondays, 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check latest upstream release
+        id: latest
+        run: |
+          latest_tag="$(gh api repos/gvegayon/ergm-js/releases/latest --jq .tag_name)"
+          current_version="$(tr -d '[:space:]' < _extensions/ergm-quarto/resources/ergm-js/VERSION)"
+          echo "latest_tag=$latest_tag" >> "$GITHUB_OUTPUT"
+          echo "current_version=$current_version" >> "$GITHUB_OUTPUT"
+          if [ "${latest_tag#v}" = "$current_version" ]; then
+            echo "up_to_date=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "up_to_date=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Refresh vendored assets
+        if: steps.latest.outputs.up_to_date == 'false'
+        run: tools/vendor-ergm-js.sh "${{ steps.latest.outputs.latest_tag }}"
+
+      - name: Open PR
+        if: steps.latest.outputs.up_to_date == 'false'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "Vendor ergm-js ${{ steps.latest.outputs.latest_tag }}"
+          branch: sync-ergm-js-${{ steps.latest.outputs.latest_tag }}
+          title: "Vendor ergm-js ${{ steps.latest.outputs.latest_tag }}"
+          body: |
+            Upstream released [${{ steps.latest.outputs.latest_tag }}](https://github.com/gvegayon/ergm-js/releases/tag/${{ steps.latest.outputs.latest_tag }}), replacing the vendored ${{ steps.latest.outputs.current_version }}.
+
+            `tools/vendor-ergm-js.sh` has already refreshed the vendored files. **Do not merge without going through this checklist** -- it is not machine-checkable:
+
+            - [ ] Did `DEFAULTS` in `src/ergm-widget.js` gain or lose any keys? Update `SPEC` in `ergm-quarto.lua` and the tables in `reference.qmd`.
+            - [ ] Did `DEFAULTS.height` change from 360? Update the `min-height` fallback in `resources/ergm-quarto.css`.
+            - [ ] Did the injected `CSS` string in `src/ergm-widget.js` gain new selectors or rules? Re-check the specificity table in `resources/ergm-quarto.css`.
+            - [ ] Did `ERGM.TERMS` change? Update the model-term whitelist in `ergm-quarto.lua`.
+            - [ ] Bump `_extension.yml`'s `version`, `EXT_VERSION` in `ergm-quarto.lua`, and the version string in `resources/ergm-quarto.js` together.
+            - [ ] Add a `CHANGELOG.md` entry.
+            - [ ] `quarto render` the examples and eyeball them.
+
+            Never auto-merged.
+          labels: dependencies

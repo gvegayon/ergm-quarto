@@ -1,0 +1,29 @@
+# Renders every example/demo and runs the static assertions in
+# tools/check-render.py, plus the version-consistency check. No R/Python
+# execution engines are needed -- every .qmd here is markdown-only.
+name: Render and check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        quarto-version: ["1.5.57", "release"] # 1.5.57: this extension's quarto-required floor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: ${{ matrix.quarto-version }}
+      - name: Check version consistency
+        run: tools/check-versions.sh
+      - name: Render website + fallback docx variant
+        run: |
+          quarto render
+          quarto render examples/fallback.qmd --to docx
+      - name: Run render assertions
+        run: python3 tools/check-render.py
