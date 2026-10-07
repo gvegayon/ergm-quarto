@@ -19,8 +19,48 @@ quarto add gvegayon/ergm-quarto
 Then, anywhere in a `.qmd`:
 
 ```markdown
-{{< ergm-widget n=60 theta-nodematch=2 height=420 >}}
+{{{< ergm-widget n=60 theta-nodematch=2 height=420 >}}}
 ```
+
+## About ergm-js and npm
+
+The simulator is published on npm as
+[`ergm-js`](https://www.npmjs.com/package/ergm-js), so you can also use it
+outside Quarto in any JavaScript project:
+
+```bash
+npm install ergm-js
+```
+
+This extension vendors a copy of a published npm release (currently
+`0.3.0`) into `_extensions/`, so nothing is fetched from npm or a CDN at
+render or view time -- decks work offline and with `embed-resources: true`.
+The extension's version number mirrors it: `X.Y.Z-N` means ergm-js `X.Y.Z`,
+release `N` of this extension. See the
+[ergm-js README](https://github.com/gvegayon/ergm-js#readme) for the
+library's own API.
+
+### Offline use and `embed-resources`
+
+Nothing is loaded from a CDN, so no network is needed at render or view
+time. The widget's JavaScript and CSS are registered as a Quarto HTML
+dependency, which Quarto handles in one of two ways:
+
+- **Default:** the files are copied to `site_libs/quarto-contrib/ergm-js-<version>/`
+  and linked from the page. Publish `site_libs/` alongside the HTML.
+- **`embed-resources: true`:** Quarto inlines the scripts and stylesheet into
+  the single HTML file, which works offline when emailed or opened from disk.
+
+```yaml
+format:
+  html:
+    embed-resources: true
+```
+
+`tools/check-render.py` checks the second case on every CI run: it renders
+[`examples/embed-resources.qmd`](https://github.com/gvegayon/ergm-quarto/blob/main/examples/embed-resources.qmd)
+and fails if the output still references `site_libs` or any external
+`<script>`/`<link>`.
 
 ## A live widget
 
