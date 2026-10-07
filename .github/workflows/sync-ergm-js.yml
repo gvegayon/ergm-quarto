@@ -56,7 +56,7 @@ jobs:
             - [ ] Did `DEFAULTS.height` change from 360? Update the `min-height` fallback in `resources/ergm-quarto.css`.
             - [ ] Did the injected `CSS` string in `src/ergm-widget.js` gain new selectors or rules? Re-check the specificity table in `resources/ergm-quarto.css`.
             - [ ] Did `ERGM.TERMS` change? Update the model-term whitelist in `ergm-quarto.lua`.
-            - [ ] Bump `_extension.yml`'s `version`, `EXT_VERSION` in `ergm-quarto.lua`, and the version string in `resources/ergm-quarto.js` together.
+            - [ ] Set `_extension.yml`'s `version`, `EXT_VERSION` in `ergm-quarto.lua`, and the version string in `resources/ergm-quarto.js` together to the new ergm-js version plus `-0` (e.g. `0.3.1-0`).
             - [ ] Add a `CHANGELOG.md` entry.
             - [ ] `quarto render` the examples and eyeball them.
 

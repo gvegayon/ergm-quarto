@@ -5,6 +5,11 @@ A [Quarto](https://quarto.org) extension that embeds the
 Exponential Random Graph Model (ERGM) simulator in any HTML-based Quarto
 output -- `html` documents, websites, books, and `revealjs` decks.
 
+The simulator comes from the [`ergm-js` npm package](https://www.npmjs.com/package/ergm-js):
+a copy of a published version is vendored into the extension (nothing is
+fetched at render or view time, so decks work offline and with
+`embed-resources: true`).
+
 **[Live demo and full docs →](https://gvegayon.github.io/ergm-quarto/)**
 
 ## Install
@@ -91,6 +96,16 @@ CSS may have changed in ways this extension needs to mirror) -- see
 [`tools/vendor-ergm-js.sh`](tools/vendor-ergm-js.sh). A weekly
 [GitHub Action](.github/workflows/sync-ergm-js.yml) runs this automatically
 and opens a PR with the same checklist; it never auto-merges.
+
+## Versions
+
+Extension versions are `X.Y.Z-N`, as in
+[epiworldjs](https://github.com/UofUEpiBio/epiworldjs): `X.Y.Z` is the
+version of the [`ergm-js` npm package](https://www.npmjs.com/package/ergm-js)
+vendored in the extension, and `N` counts releases of the extension with that
+ergm-js. `0.3.0-0` is the first release with ergm-js 0.3.0; `0.3.0-1` would
+be the next one with the same ergm-js. [`tools/check-versions.sh`](tools/check-versions.sh)
+(run in CI) checks that `X.Y.Z` matches the vendored package.
 
 ## License
 

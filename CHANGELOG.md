@@ -1,7 +1,13 @@
 # Changelog
 
-## Unreleased
+## 0.3.0-0
 
+Versions now follow ergm-js: `X.Y.Z` is the vendored ergm-js version and `-N`
+counts releases of this extension with it.
+
+- Vendors ergm-js 0.3.0 (new model engine and term factories; the widget
+  itself is unchanged, so the exposed terms are still `edges`, `nodematch` and
+  `mutual`).
 - `tools/vendor-ergm-js.sh` and the weekly sync workflow now take ergm-js from
   its npm package instead of GitHub tags.
 

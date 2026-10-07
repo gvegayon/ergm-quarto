@@ -63,9 +63,11 @@ Manual checklist before committing (this script cannot verify these):
          header comment, and add overrides if needed.
   [ ] Did ERGM.TERMS in src/ergm.js change?
       -> update the model-term whitelist (MODEL_TERMS) in ergm-quarto.lua.
-  [ ] Bump _extension.yml's \`version\`, EXT_VERSION in ergm-quarto.lua, and
-      the version string in resources/ergm-quarto.js -- together, since
-      they must always agree (tools/check-versions.sh enforces this).
+  [ ] Set _extension.yml's \`version\`, EXT_VERSION in ergm-quarto.lua, and
+      the version string in resources/ergm-quarto.js to ${UPSTREAM_VERSION}-0
+      (or -N+1 if only the extension changed) -- together, since they must
+      always agree and start with the vendored ergm-js version
+      (tools/check-versions.sh enforces this).
   [ ] Add a CHANGELOG.md entry.
 
 Then review the diff:
