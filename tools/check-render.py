@@ -115,6 +115,13 @@ def check_embed_resources(html_path):
     div_count = len(re.findall(r'<div class="ergm-widget ergm-quarto"', text))
     if div_count < 1:
         errs.append(f"{html_path.name}: expected at least 1 widget div, found {div_count}")
+    # Self-contained means no network at view time: no <script src> or
+    # <link href> may point at http(s):// (no CDN). Plain <a href> links and
+    # URL strings inside inlined code are fine, so only tag attributes count.
+    external = re.findall(r'<script\b[^>]*\bsrc=["\'](?:https?:)?//[^"\']+', text)
+    external += re.findall(r'<link\b[^>]*\bhref=["\'](?:https?:)?//[^"\']+', text)
+    if external:
+        errs.append(f"{html_path.name}: embed-resources build still loads external resources: {external[:3]}")
     return errs
 
 

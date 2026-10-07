@@ -1,0 +1,26 @@
+# please-bump config: a PR that changes the extension must bump its version.
+# The version lives in three places that must always agree (the same check
+# tools/check-versions.sh runs); `consistency: identical` enforces that here.
+#
+# Versions are X.Y.Z-N: X.Y.Z is the vendored ergm-js npm version and N counts
+# releases of this extension with that ergm-js (0.3.0-0, 0.3.0-1, 0.3.1-0, ...).
+# SemVer reads the -N as a pre-release identifier, so 0.3.0-0 -> 0.3.0-1 and
+# 0.3.0-1 -> 0.3.1-0 both count as bumps.
+version: 1
+
+groups:
+  extension:
+    # Docs-only changes (*.qmd, README, tools/, workflows) don't need a bump;
+    # anything shipped inside the extension does.
+    paths: |
+      _extensions/ergm-quarto/
+    files:
+      - _extensions/ergm-quarto/_extension.yml
+      - _extensions/ergm-quarto/ergm-quarto.lua
+      - _extensions/ergm-quarto/resources/ergm-quarto.js
+    scheme: semver
+    consistency: identical
+    regex:
+      - '^version:[[:space:]]*([^[:space:]]+)[[:space:]]*$'
+      - '^local EXT_VERSION = "([^"]+)"'
+      - '^[[:space:]]*version: "([^"]+)",?[[:space:]]*$'

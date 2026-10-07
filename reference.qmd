@@ -1,13 +1,13 @@
 ---
 title: Reference
-subtitle: "Every option {{< ergm-widget >}} accepts."
+subtitle: "Every option the ergm-widget shortcode accepts."
 format: html
 ---
 
 ## Usage
 
 ```markdown
-{{< ergm-widget n=60 theta-nodematch=2 height=420 >}}
+{{{< ergm-widget n=60 theta-nodematch=2 height=420 >}}}
 ```
 
 Values are plain `key=value` pairs -- no quotes needed unless a value
@@ -98,7 +98,7 @@ one of those would be indistinguishable from the list separator used by
 ## Non-HTML output
 
 In any format that isn't HTML-with-JS (PDF via LaTeX or typst, docx, ...),
-`{{< ergm-widget >}}` never emits its JavaScript machinery. Instead:
+`{{{< ergm-widget >}}}` never emits its JavaScript machinery. Instead:
 
 - `fallback=note` (the default) prints one italic line of text.
 - `fallback=none` prints nothing.
