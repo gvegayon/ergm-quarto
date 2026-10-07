@@ -1,4 +1,4 @@
-# Weekly check for a new gvegayon/ergm-js release. If the vendored VERSION
+# Weekly check for a new ergm-js release on npm. If the vendored VERSION
 # is behind, refreshes the vendored assets and opens a PR carrying
 # tools/vendor-ergm-js.sh's manual review checklist -- this workflow never
 # auto-merges; every upstream bump needs a human to check for DEFAULTS
@@ -19,11 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
 
       - name: Check latest upstream release
         id: latest
         run: |
-          latest_tag="$(gh api repos/gvegayon/ergm-js/releases/latest --jq .tag_name)"
+          latest_tag="v$(npm view ergm-js version)"
           current_version="$(tr -d '[:space:]' < _extensions/ergm-quarto/resources/ergm-js/VERSION)"
           echo "latest_tag=$latest_tag" >> "$GITHUB_OUTPUT"
           echo "current_version=$current_version" >> "$GITHUB_OUTPUT"
@@ -32,8 +35,6 @@ jobs:
           else
             echo "up_to_date=false" >> "$GITHUB_OUTPUT"
           fi
-        env:
-          GH_TOKEN: ${{ github.token }}
 
       - name: Refresh vendored assets
         if: steps.latest.outputs.up_to_date == 'false'
@@ -47,7 +48,7 @@ jobs:
           branch: sync-ergm-js-${{ steps.latest.outputs.latest_tag }}
           title: "Vendor ergm-js ${{ steps.latest.outputs.latest_tag }}"
           body: |
-            Upstream released [${{ steps.latest.outputs.latest_tag }}](https://github.com/gvegayon/ergm-js/releases/tag/${{ steps.latest.outputs.latest_tag }}), replacing the vendored ${{ steps.latest.outputs.current_version }}.
+            Upstream published [ergm-js ${{ steps.latest.outputs.latest_tag }}](https://www.npmjs.com/package/ergm-js) on npm, replacing the vendored ${{ steps.latest.outputs.current_version }}.
 
             `tools/vendor-ergm-js.sh` has already refreshed the vendored files. **Do not merge without going through this checklist** -- it is not machine-checkable:
 

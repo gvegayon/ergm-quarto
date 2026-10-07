@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- `tools/vendor-ergm-js.sh` and the weekly sync workflow now take ergm-js from
+  its npm package instead of GitHub tags.
+
 ## 0.1.0
 
 - Initial release.
