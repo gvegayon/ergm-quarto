@@ -1,32 +1,38 @@
 #!/usr/bin/env bash
-# Refreshes the vendored ergm-js assets from an upstream release tag.
+# Refreshes the vendored ergm-js assets from a release published on npm
+# (https://www.npmjs.com/package/ergm-js).
 #
-# Usage: tools/vendor-ergm-js.sh v0.2.2
+# Usage: tools/vendor-ergm-js.sh 0.2.2     (a leading "v" is accepted)
 #
-# After running, review the printed checklist AND `git diff --stat` before
-# committing -- upstream may have changed DEFAULTS, added/removed a term, or
-# changed its injected CSS in ways this extension needs to mirror.
+# Needs npm. After running, review the printed checklist AND `git diff --stat`
+# before committing -- upstream may have changed DEFAULTS, added/removed a
+# term, or changed its injected CSS in ways this extension needs to mirror.
 set -euo pipefail
 
 if [ "$#" -ne 1 ]; then
-  echo "Usage: $0 <upstream-tag, e.g. v0.2.2>" >&2
+  echo "Usage: $0 <ergm-js version, e.g. 0.2.2>" >&2
   exit 1
 fi
 
-TAG="$1"
+TAG="v${1#v}"
 UPSTREAM_VERSION="${TAG#v}"
-RAW_BASE="https://raw.githubusercontent.com/gvegayon/ergm-js/${TAG}"
 
 cd "$(dirname "$0")/.."
 DST="_extensions/ergm-quarto/resources/ergm-js"
 
-echo "Fetching ergm-js ${TAG} from ${RAW_BASE} ..."
+WORK="$(mktemp -d)"
+trap 'rm -rf "$WORK"' EXIT
 
-curl -fsSL "${RAW_BASE}/src/ergm.js" -o "${DST}/src/ergm.js"
-curl -fsSL "${RAW_BASE}/src/ergm-widget.js" -o "${DST}/src/ergm-widget.js"
-curl -fsSL "${RAW_BASE}/vendor/graphology.umd.min.js" -o "${DST}/vendor/graphology.umd.min.js"
-curl -fsSL "${RAW_BASE}/vendor/sigma.min.js" -o "${DST}/vendor/sigma.min.js"
-curl -fsSL "${RAW_BASE}/LICENSE.md" -o "${DST}/LICENSE.md"
+echo "Fetching ergm-js@${UPSTREAM_VERSION} from npm ..."
+
+(cd "$WORK" && npm pack "ergm-js@${UPSTREAM_VERSION}" --silent >/dev/null)
+tar -xzf "$WORK"/ergm-js-"${UPSTREAM_VERSION}".tgz -C "$WORK"
+
+cp "$WORK/package/src/ergm.js" "${DST}/src/ergm.js"
+cp "$WORK/package/src/ergm-widget.js" "${DST}/src/ergm-widget.js"
+cp "$WORK/package/vendor/graphology.umd.min.js" "${DST}/vendor/graphology.umd.min.js"
+cp "$WORK/package/vendor/sigma.min.js" "${DST}/vendor/sigma.min.js"
+cp "$WORK/package/LICENSE.md" "${DST}/LICENSE.md"
 
 downloaded_version="$(grep -o 'const VERSION = "[^"]*"' "${DST}/src/ergm.js" | sed -E 's/.*"([^"]*)"/\1/')"
 if [ "$downloaded_version" != "$UPSTREAM_VERSION" ]; then

@@ -79,10 +79,11 @@ quarto render                     # render everything
 python3 tools/check-render.py     # static assertions over the rendered output
 ```
 
-To refresh the vendored `ergm-js` assets after an upstream release:
+To refresh the vendored `ergm-js` assets after a new [`ergm-js`](https://www.npmjs.com/package/ergm-js) release
+on npm (needs npm):
 
 ```bash
-tools/vendor-ergm-js.sh v0.2.2
+tools/vendor-ergm-js.sh 0.2.2
 ```
 
 This prints a manual review checklist (upstream's `DEFAULTS` or injected
