@@ -34,6 +34,10 @@ check() {
 
 check "VERSION file" "$vendored_version" "ergm-quarto.lua ERGM_JS_VERSION" "$lua_ergm_js_version"
 check "VERSION file" "$vendored_version" "vendored ergm.js VERSION const" "$ergm_js_const_version"
+# Extension versions are ergm-js's X.Y.Z plus -N, a counter for this extension
+# (the same scheme as epiworldjs): 0.3.0-0 is the first release with ergm-js
+# 0.3.0, 0.3.0-1 the next one with the same ergm-js.
+check "_extension.yml version without the -N counter" "${ext_yml_version%-*}" "VERSION file" "$vendored_version"
 check "_extension.yml version" "$ext_yml_version" "ergm-quarto.lua EXT_VERSION" "$lua_ext_version"
 check "_extension.yml version" "$ext_yml_version" "ergm-quarto.js version" "$bootstrap_version"
 
