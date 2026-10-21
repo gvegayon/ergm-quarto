@@ -23,6 +23,16 @@ branch.
 
 <div style="height: 60vh;"></div>
 
+## Sparse network, tie / no-tie sampler
+
+The same sparse model with `sampler="tnt"`: half of all proposals target an
+existing tie, so ties appear and disappear far more often per step than
+with the default Gibbs sampler above.
+
+{{< ergm-widget n=60 theta-edges=-4 model="edges" sampler="tnt" >}}
+
+<div style="height: 60vh;"></div>
+
 ## Reciprocity-heavy directed network
 
 {{< ergm-widget n=40 theta-mutual=2.5 layout="circle" >}}

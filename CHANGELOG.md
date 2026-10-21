@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0-0
+
+- Vendors ergm-js 0.4.0, which adds the tie / no-tie (TNT)
+  Metropolis-Hastings sampler from R's `ergm`.
+- New `sampler` option (`gibbs`, the default, or `tnt`), forwarded to the
+  widget. TNT mixes much faster on sparse networks.
+
 ## 0.3.0-0
 
 Versions now follow ergm-js: `X.Y.Z` is the vendored ergm-js version and `-N`

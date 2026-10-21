@@ -42,3 +42,11 @@ format: html
 ## Out-of-range soft warning (still renders; check render log for the warning)
 
 {{< ergm-widget n=500 >}}
+
+## TNT sampler -- must encode as `{"sampler":"tnt"}`
+
+{{< ergm-widget sampler="tnt" >}}
+
+## Unknown sampler -- expected to fail loudly
+
+{{< ergm-widget sampler="mh" >}}

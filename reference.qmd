@@ -70,7 +70,8 @@ underlying simulation semantics.
 | `mean-degree` | `meanDegree` | number, > 0 | slider range 1–10 |
 | `p-group` | `pGroup` | number, 0–1 | initial group-membership probability |
 | `seed` | `seed` | integer | PRNG seed |
-| `steps-per-frame` | `stepsPerFrame` | integer, 1–100000 | Gibbs proposals per animation frame while running |
+| `steps-per-frame` | `stepsPerFrame` | integer, 1–100000 | sampler proposals per animation frame while running |
+| `sampler` | `sampler` | `gibbs` \| `tnt` | MCMC update: `gibbs` (default) redraws a random dyad from its full conditional; `tnt` is ergm's tie / no-tie Metropolis-Hastings, which mixes much faster on sparse networks |
 | `height` | `height` | integer (px) | also sets the `min-height` reserved before mount |
 | `auto-start` | `autoStart` | boolean | `true`/`false`, also `yes`/`no`, `on`/`off`, `1`/`0` |
 | `layout` | `layout` | `force` \| `circle` | |

@@ -8,8 +8,8 @@
 -- lazy-init logic down its IntersectionObserver fallback instead of its
 -- (better) per-slide Reveal branch. See README.md "Why no inline script".
 
-local ERGM_JS_VERSION = "0.3.0" -- vendored upstream version; tools/vendor-ergm-js.sh rewrites this line
-local EXT_VERSION = "0.3.0-0" -- must equal _extension.yml `version`; tools/check-versions.sh enforces this
+local ERGM_JS_VERSION = "0.4.0" -- vendored upstream version; tools/vendor-ergm-js.sh rewrites this line
+local EXT_VERSION = "0.4.0-0" -- must equal _extension.yml `version`; tools/check-versions.sh enforces this
 
 local DEP_NAME = "ergm-js"
 local deps_done = false
@@ -193,6 +193,7 @@ local SPEC = {
   ["p-group"] = { path = { "pGroup" }, kind = "number", min = 0, max = 1 },
   ["seed"] = { path = { "seed" }, kind = "int" },
   ["steps-per-frame"] = { path = { "stepsPerFrame" }, kind = "int", min = 1, max = 100000 },
+  ["sampler"] = { path = { "sampler" }, kind = "enum", enum = { gibbs = true, tnt = true } },
   ["height"] = { path = { "height" }, kind = "px", min = 40 },
   ["auto-start"] = { path = { "autoStart" }, kind = "bool" },
   ["layout"] = { path = { "layout" }, kind = "enum", enum = { force = true, circle = true } },
