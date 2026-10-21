@@ -33,7 +33,7 @@ npm install ergm-js
 ```
 
 This extension vendors a copy of a published npm release (currently
-`0.3.0`) into `_extensions/`, so nothing is fetched from npm or a CDN at
+`0.4.0`) into `_extensions/`, so nothing is fetched from npm or a CDN at
 render or view time -- decks work offline and with `embed-resources: true`.
 The extension's version number mirrors it: `X.Y.Z-N` means ergm-js `X.Y.Z`,
 release `N` of this extension. See the

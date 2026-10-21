@@ -142,6 +142,7 @@ def check_edge_cases(html_path):
         "ergm-widget-3": {"theta": {"edges": -2.5}},
         "ergm-widget-4": {"n": 40},
         "ergm-widget-5": {"groupColors": ["#00707a", "#c0491f"]},
+        "ergm-widget-11": {"sampler": "tnt"},
     }
     for widget_id, expected in expectations.items():
         m = re.search(rf'<div class="ergm-widget ergm-quarto" id="{widget_id}"[^>]*data-ergm-options="([^"]*)"', text)
